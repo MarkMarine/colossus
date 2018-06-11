@@ -1,5 +1,8 @@
 workspace(name = "colossus")
 
+# Versions
+PROMETHEUS_JAVA_VERSION = "0.4.0"
+
 # Imports basic Go rules for Bazel (e.g. go_binary)
 git_repository(
     name = "io_bazel_rules_go",
@@ -34,6 +37,18 @@ git_repository(
     remote = "https://github.com/grpc/grpc.git",
     commit = "17f682d8274ef0b7d1376eeee5e94839a0750e0e",
 )
+
+# Import Maven rules for Gradle conversion
+git_repository(
+    name = "org_pubref_rules_maven",
+    remote = "https://github.com/pubref/rules_maven",
+    commit = "9c3b07a6d9b195a1192aea3cd78afd1f66c80710",
+)
+
+# Loads Maven rules
+load("@org_pubref_rules_maven//maven:rules.bzl", "maven_repositories", "maven_repository")
+
+maven_repositories()
 
 # Loads Docker for Java rules (e.g. java_image)
 load(
@@ -97,6 +112,21 @@ bind(
 bind(
     name = "grpc-stub",
     actual = "@io_grpc_grpc_java//stub",
+)
+
+maven_jar(
+    name = "io_prometheus_simpleclient",
+    artifact = "io.prometheus:simpleclient:" + PROMETHEUS_JAVA_VERSION,
+)
+
+maven_jar(
+    name = "io_prometheus_simpleclient_httpserver",
+    artifact = "io.prometheus:simpleclient_httpserver:" + PROMETHEUS_JAVA_VERSION,
+)
+
+maven_jar(
+    name = "me_dinowernli_java_grpc_prometheus",
+    artifact = "me.dinowernli:java-grpc-prometheus:0.3.0"
 )
 
 # Gazelle-generated Go dependencies
@@ -254,4 +284,46 @@ go_repository(
     name = "com_github_unrolled_render",
     commit = "65450fb6b2d3595beca39f969c411db8f8d5c806",
     importpath = "github.com/unrolled/render",
+)
+
+go_repository(
+    name = "com_github_beorn7_perks",
+    commit = "3a771d992973f24aa725d07868b467d1ddfceafb",
+    importpath = "github.com/beorn7/perks",
+)
+
+go_repository(
+    name = "com_github_matttproud_golang_protobuf_extensions",
+    commit = "c12348ce28de40eed0136aa2b644d0ee0650e56c",
+    importpath = "github.com/matttproud/golang_protobuf_extensions",
+)
+
+go_repository(
+    name = "com_github_prometheus_client_golang",
+    commit = "c5b7fccd204277076155f10851dad72b76a49317",
+    importpath = "github.com/prometheus/client_golang",
+)
+
+go_repository(
+    name = "com_github_prometheus_client_model",
+    commit = "99fa1f4be8e564e8a6b613da7fa6f46c9edafc6c",
+    importpath = "github.com/prometheus/client_model",
+)
+
+go_repository(
+    name = "com_github_prometheus_common",
+    commit = "7600349dcfe1abd18d72d3a1770870d9800a7801",
+    importpath = "github.com/prometheus/common",
+)
+
+go_repository(
+    name = "com_github_prometheus_procfs",
+    commit = "94663424ae5ae9856b40a9f170762b4197024661",
+    importpath = "github.com/prometheus/procfs",
+)
+
+go_repository(
+    name = "com_github_grpc_ecosystem_go_grpc_prometheus",
+    commit = "c225b8c3b01faf2899099b768856a9e916e5087b",
+    importpath = "github.com/grpc-ecosystem/go-grpc-prometheus",
 )
